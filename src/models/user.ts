@@ -1,37 +1,40 @@
-import { model, Schema } from 'mongoose';
+import { Model, model, Schema } from 'mongoose';
 
-interface IUser {
-  name: string;
+type User = {
   about: string;
   avatar: string;
-}
+  name: string;
+};
 
-const userSchema = new Schema<IUser>({
-  name: {
-    type: String,
-    required: true,
-    minlength: 2,
-    maxlength: 30,
-  },
+const userSchema = new Schema<User>({
   about: {
-    type: String,
-    required: true,
-    minlength: 2,
+    default: 'Исследователь',
     maxlength: 200,
+    minlength: 2,
+    required: true,
+    type: String,
   },
   avatar: {
-    type: String,
+    default:
+      'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     required: true,
+    type: String,
+    validate: {
+      message: 'Некорректная ссылка на фото профиля',
+      validator(avatar: string) {
+        const regexp =
+          /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
+        return regexp.test(avatar);
+      },
+    },
   },
-}, {
-  toJSON: {
-    transform: (doc, ret) => ({
-      name: ret.name,
-      about: ret.about,
-      avatar: ret.avatar,
-      _id: ret._id,
-    }),
+  name: {
+    default: 'Жак-Ив Кусто',
+    maxlength: 30,
+    minlength: 2,
+    required: true,
+    type: String,
   },
 });
 
-export default model<IUser>('user', userSchema);
+export default model<User, Model<User>>('user', userSchema);

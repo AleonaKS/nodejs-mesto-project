@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 
 import { NotFoundError } from './errors';
+import errorHandler from './middlewares/error-handler';
 import addUserId from './middlewares/addUserId';
 import cardsRouter from './routes/cards';
 import usersRouter from './routes/users';
@@ -29,9 +30,11 @@ app.use(addUserId);
 app.use('/users', usersRouter);
 app.use('/cards', cardsRouter);
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req, res, next) => {
   next(new NotFoundError('Маршрут не найден'));
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
