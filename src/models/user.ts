@@ -49,8 +49,7 @@ const userSchema = new Schema<IUser>({
     select: false, // не возвращать по умолчанию
   },
 });
-
-// Чтобы не возвращать пароль при отправке пользователя
+ 
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
