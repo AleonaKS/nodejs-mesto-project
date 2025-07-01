@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import errorHandler from './middlewares/error-handler';
 import { requestLogger } from './middlewares/request-logger';
 import routes from './routes/index';
+import { errors } from 'celebrate';
 
 dotenv.config();
 
@@ -29,8 +30,11 @@ mongoose
 
 app.use(routes);
 
-app.use(errorHandler);
+app.use(errors()); 
+
+app.use(errorHandler); 
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
+
