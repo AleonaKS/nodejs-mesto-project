@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose';
+import { urlPattern } from '../constants';
 
 type Card = {
   createdAt: Date;
@@ -10,39 +11,33 @@ type Card = {
 
 const cardSchema = new Schema<Card>({
   createdAt: {
-    default: Date.now,
     type: Date,
+    default: Date.now,
   },
-  likes: [
-    {
-      default: [],
-      ref: 'user',
-      type: Schema.Types.ObjectId,
-    },
-  ],
+  likes: {
+    type: [Schema.Types.ObjectId],
+    ref: 'user',
+    default: [],
+  },
   link: {
-    required: true,
     type: String,
+    required: true,
     validate: {
-      message: 'Некорректная ссылка',
-      validator(link: string) {
-        const regexp =
-          /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
-        return regexp.test(link);
-      },
+      validator: (link: string) => urlPattern.test(link),
+      message: 'Некорректная ссылка на изображение карточки',
     },
   },
   name: {
-    maxlength: 30,
-    minlength: 2,
-    required: true,
     type: String,
+    required: true,
+    minlength: 2,
+    maxlength: 30,
   },
   owner: {
+    type: Schema.Types.ObjectId,
     ref: 'user',
     required: true,
-    type: Schema.Types.ObjectId,
   },
 });
 
-export default model<Card>('card', cardSchema);
+export default model<Card>('Card', cardSchema);

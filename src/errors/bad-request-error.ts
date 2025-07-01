@@ -1,6 +1,6 @@
 import { StatusCodes } from '../constants/status-codes';
 
-export class ValidationError extends Error {
+export class BadRequestError extends Error {
   statusCode: number;
 
   constructor(message: string) {

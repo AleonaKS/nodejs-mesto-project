@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Error } from 'mongoose';
 
 import { StatusCodes } from '../constants/status-codes';
-import { NotFoundError, ValidationError } from '../errors';
+import { ForbiddenError, NotFoundError, ValidationError } from '../errors';
 import Card from '../models/card';
 import { AuthContext } from '../types/types';
 
@@ -27,17 +27,22 @@ export async function createCard(
   }
 }
 
+
 export async function deleteCard(
   req: Request,
-  res: Response,
+  res: Response<unknown, AuthContext>,
   next: NextFunction,
 ) {
   try {
-    const card = await Card.findByIdAndDelete(req.params.id);
+    const card = await Card.findById(req.params.id);
     if (!card) {
       throw new NotFoundError('Карточка не найдена');
     }
-    res.status(StatusCodes.OK).send(card);
+    if (card.owner.toString() !== res.locals.user._id) {
+      throw new ForbiddenError('Вы не можете удалить эту карточку');
+    }
+    await card.remove();
+    res.status(StatusCodes.OK).send({ message: 'Карточка удалена' });
   } catch (err) {
     next(err);
   }
