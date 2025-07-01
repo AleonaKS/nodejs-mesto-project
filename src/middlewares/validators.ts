@@ -3,7 +3,7 @@ import { Joi } from 'celebrate';
 import { BadRequestError } from '../errors';
 import { ErrorMessages, urlPattern, UserDefaults } from '../constants';
 
-// User validators
+
 const createUserSchema = Joi.object({
   name: Joi.string().min(2).max(30).default(UserDefaults.DEFAULT_NAME),
   about: Joi.string().min(2).max(200).default(UserDefaults.DEFAULT_ABOUT),
@@ -26,13 +26,11 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
-// Card validators
 const createCardSchema = Joi.object({
   name: Joi.string().min(2).max(30).required(),
   link: Joi.string().uri().required(),
 });
 
-// ID validators
 const objectIdSchema = Joi.string().hex().length(24);
 
 export const validateCreateUser = (req: Request, res: Response, next: NextFunction) => {

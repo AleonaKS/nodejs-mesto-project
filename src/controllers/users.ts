@@ -124,10 +124,9 @@ export async function createUser(
       password: hashedPassword,
     });
 
-    res.status(201).send(user); // toJSON удалит пароль
+    res.status(201).send(user);  
   } catch (err: any) {
-    if (err.code === 11000) {
-      // Дубликат email
+    if (err.code === 11000) { 
       next(new ConflictError(ErrorMessages.USER_ALREADY_EXISTS_ERROR));
     } else if (err.name === 'ValidationError') {
       next(new ValidationError('Переданы некорректные данные при создании пользователя'));
